@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<title>WiFi Hat V2 - Exact Dark Premium</title>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        margin: 0;
+        padding: 40px;
+        background: #f4f4f4;
+        font-family: 'Hind Siliguri', sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 40px;
+    }
+    
+    /* Main Card Container */
+    .card {
+        width: 900px;
+        height: 360px; /* Fixed Height */
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        /* Deep Dark Premium Background */
+        background: radial-gradient(circle at top right, #15092b, #070311);
+        position: relative;
+        box-sizing: border-box;
+    }
+
+    /* ==================================
+       FRONT SIDE CSS
+    ================================== */
+    /* Subtle background lines/texture */
+    .pattern-bg {
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 44px;
+        background-image: repeating-linear-gradient(45deg, rgba(255,255,255,0.01) 0, rgba(255,255,255,0.01) 2px, transparent 2px, transparent 8px);
+        z-index: 0;
+    }
+
+    /* Left Purple Wave Curve */
+    .left-purple-bg {
+        position: absolute;
+        top: 0; left: 0;
+        width: 320px;
+        height: calc(100% - 44px);
+        background: linear-gradient(180deg, #240a4a, #0e0321);
+        border-radius: 0 150px 250px 0;
+        z-index: 1;
+        border-right: 2px solid rgba(214, 171, 74, 0.15); /* Subtle gold reflection */
+    }
+
+    /* Left Content (Logo & Brand) */
+    .left-content {
+        position: absolute;
+        top: 0; left: 0;
+        width: 230px; 
+        height: calc(100% - 44px);
+        z-index: 3;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    .left-content img { 
+        width: 85px; 
+        /* Converts black logo to Gold */
+        filter: brightness(0) saturate(100%) invert(70%) sepia(50%) saturate(600%) hue-rotate(5deg) brightness(95%) contrast(90%); 
+    }
+    .brand { font-size: 30px; font-weight: bold; color: #d6ab4a; margin-top: 5px; line-height: 1; }
+    .slogan { font-size: 11px; color: #d6ab4a; margin-top: 5px; font-weight: normal; letter-spacing: 0.5px; opacity: 0.8; }
+
+    /* Price Tag Overlay */
+    .price-tag {
+        position: absolute;
+        top: 0; right: 40px;
+        background: rgba(10, 4, 18, 0.4);
+        color: #d6ab4a;
+        padding: 10px 25px 15px;
+        border-radius: 0 0 35px 35px;
+        border: 2px solid #d6ab4a;
+        border-top: none;
+        text-align: center;
+        z-index: 3;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+    .price-tag span { font-size: 15px; color: #ddd; display: block; font-weight: normal; margin-bottom: -5px; }
+    .price-tag .amount { font-size: 42px; font-weight: bold; line-height: 1; }
+
+    /* Center Content Area */
+    .main-content {
+        position: absolute;
+        left: 310px; 
+        right: 0;
+        top: 30px;
+        text-align: center;
+        z-index: 2;
+        padding-right: 20px;
+    }
+    .title { font-size: 42px; line-height: 1.15; color: white; font-weight: bold; margin: 0; padding-right: 80px; }
+    
+    /* Package Tag (Solid Gold) */
+    .pkg { 
+        display: inline-block; 
+        margin-top: 15px; 
+        background: linear-gradient(90deg, #c79a3b, #ebd07a); 
+        color: #0a0412; 
+        padding: 5px 30px; 
+        border-radius: 20px; 
+        font-size: 15px; 
+        font-weight: bold; 
+    }
+
+    /* Voucher Box Styling (Solid Gold Gradient) */
+    .voucher-wrapper {
+        position: relative;
+        margin-top: 25px;
+        display: inline-block;
+    }
+    .voucher-label {
+        position: absolute;
+        top: -14px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #110526;
+        color: #d6ab4a;
+        border: 1px solid #d6ab4a;
+        padding: 4px 25px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: bold;
+        z-index: 3;
+        letter-spacing: 1px;
+    }
+    .voucher-box {
+        background: linear-gradient(90deg, #be9338 0%, #fef1a4 40%, #fef1a4 60%, #be9338 100%);
+        border-radius: 12px;
+        padding: 20px 45px 10px;
+        font-size: 42px;
+        font-weight: bold;
+        color: #000;
+        letter-spacing: 3px;
+        position: relative;
+        z-index: 2;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    }
+
+    /* Bottom Bar */
+    .bottom-bar {
+        position: absolute;
+        bottom: 0; left: 0; width: 100%;
+        height: 44px;
+        background: #080314;
+        color: #ccc;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        font-size: 12px;
+        z-index: 5;
+    }
+    .bottom-bar div { display: flex; align-items: center; gap: 8px; }
+    .bottom-bar svg { stroke: #d6ab4a; }
+
+    /* ==================================
+       BACK SIDE CSS
+    ================================== */
+    .back {
+        width: 100%;
+        height: 100%;
+        background: #0d061c;
+        position: relative;
+    }
+    .back-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: stretch;
+        padding: 30px 40px;
+        height: calc(100% - 44px);
+        box-sizing: border-box;
+    }
+
+    /* Columns with vertical separators */
+    .col {
+        display: flex;
+        flex-direction: column;
+        padding: 10px 0;
+    }
+    .col-divider {
+        border-right: 1px solid rgba(255, 255, 255, 0.1);
+        padding-right: 20px;
+        margin-right: 15px;
+    }
+
+    /* Column 1: Rules */
+    .rule-col { width: 33%; align-items: flex-start; }
+    .rule-pill {
+        background: linear-gradient(90deg, #c79a3b, #ebd07a);
+        color: #000;
+        padding: 4px 15px;
+        border-radius: 4px;
+        font-size: 13px;
+        font-weight: bold;
+        display: inline-block;
+        margin-bottom: 20px;
+    }
+    .rule-list { list-style: none; padding: 0; margin: 0; }
+    .rule-list li {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 12px;
+        font-size: 12px;
+        color: #ccc;
+    }
+    .rule-list li svg { flex-shrink: 0; stroke: #aaa; }
+
+    /* Column 2: QR */
+    .qr-col { width: 22%; align-items: center; justify-content: center; }
+    .qr-title { color: #d6ab4a; font-weight: bold; font-size: 13px; margin-bottom: 12px; }
+    .qr-box { width: 100px; height: 100px; padding: 4px; border-radius: 5px; background: white; }
+    .qr-text { font-size: 11px; color: #aaa; margin-top: 10px; }
+
+    /* Column 3: Info */
+    .info-col { width: 20%; justify-content: center; gap: 20px; }
+    .info-item { display: flex; align-items: center; gap: 10px; font-size: 12px; color: #ccc; }
+    .info-item strong { color: #d6ab4a; font-weight: bold; }
+    .info-item svg { stroke: #d6ab4a; }
+
+    /* Column 4: Scratch */
+    .scratch-col { width: 25%; align-items: center; justify-content: center; }
+    .scratch-title { color: white; font-weight: normal; font-size: 13px; margin-bottom: 12px; }
+    .scratch-area { 
+        width: 100%; 
+        height: 60px; 
+        background: repeating-linear-gradient(45deg, #ccc, #ccc 10px, #bbb 10px, #bbb 20px); 
+        border: 2px solid #555; 
+        display: flex; 
+        justify-content: center; 
+        align-items: center; 
+        font-weight: bold; 
+        font-size: 16px; 
+        color: #222; 
+        border-radius: 6px; 
+    }
+    .scratch-text { font-size: 11px; color: #aaa; margin-top: 10px; }
+
+    /* Footer */
+    .back-footer { 
+        position: absolute; 
+        bottom: 0; left: 0; 
+        width: 100%; height: 44px; 
+        background: #080314; 
+        color: #d6ab4a; 
+        display: flex; 
+        justify-content: space-between; 
+        align-items: center; 
+        padding: 0 40px; 
+        font-size: 13px; 
+        box-sizing: border-box; 
+    }
+</style>
+</head>
+<body>
+
+<div class="card">
+    <div class="pattern-bg"></div>
+    <div class="left-purple-bg"></div>
+    
+    <div class="left-content">
+        <img src="/static/logo.png" alt="Logo">
+        <div class="brand">WiFi Hat</div>
+        <div class="slogan">Stay Connected, Stay Online</div>
+    </div>
+    
+    <div class="price-tag">
+        <span>মূল্য</span>
+        <div class="amount">৳150</div>
+    </div>
+    
+    <div class="main-content">
+        <h1 class="title">আনলিমিটেড<br>ইন্টারনেট</h1>
+        <div class="pkg">7 Day Package</div>
+        <br>
+        <div class="voucher-wrapper">
+            <div class="voucher-label">VOUCHER CODE</div>
+            <div class="voucher-box">6573 8483 1707</div>
+        </div>
+    </div>
+    
+    <div class="bottom-bar">
+        <div>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+            High Speed Internet
+        </div>
+        <div>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            Secure Connection
+        </div>
+        <div>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            Trusted Network
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="back">
+        <div class="back-content">
+            
+            <div class="col rule-col col-divider">
+                <div class="rule-pill">ব্যবহার নির্দেশিকা</div>
+                <ul class="rule-list">
+                    <li>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M5 12.55a11 11 0 0 1 14.08 0"></path><path d="M1.42 9a16 16 0 0 1 21.16 0"></path><path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path><line x1="12" y1="20" x2="12.01" y2="20"></line></svg>
+                        WiFi Hat এর SSID তে কানেক্ট করুন
+                    </li>
+                    <li>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                        ব্রাউজার ওপেন করে Login পেইজে যান
+                    </li>
+                    <li>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"></path></svg>
+                        Voucher অপশনে ক্লিক করুন
+                    </li>
+                    <li>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                        ভাউচার কোড দিন এবং Login করুন
+                    </li>
+                    <li>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        ইন্টারনেট উপভোগ করুন
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="col qr-col col-divider">
+                <div class="qr-title">QR LOGIN</div>
+                <div class="qr-box">
+                    <div style="width:100%; height:100%; display:flex; justify-content:center; align-items:center; font-weight:bold; color:#0f0c29; font-size:12px;">
+                    QR LOGIN
+                    </div>
+                </div>
+                <div class="qr-text">Scan করে Login করুন</div>
+            </div>
+            
+            <div class="col info-col col-divider">
+                <div class="info-item">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                    <div>Validity : <strong>7 Days</strong></div>
+                </div>
+                <div class="info-item">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+                    <div>Device : <strong>1 Device</strong></div>
+                </div>
+                <div class="info-item">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 18v-6a9 9 0 0 1 18 0v6"></path><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path></svg>
+                    <div>Support : <strong>01733243216</strong></div>
+                </div>
+            </div>
+            
+            <div class="col scratch-col">
+                <div class="scratch-title">ভাউচার কোড</div>
+                <div class="scratch-area">SCRATCH HERE</div>
+                <div class="scratch-text">স্ক্র্যাচ করে কোড দেখুন</div>
+            </div>
+            
+        </div>
+        
+        <div class="back-footer">
+            <div>⚠️ এই কার্ডটি অন্যকে ব্যবহার করতে দেবেন না</div>
+            <div>Thank You! 💛</div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>WiFi Hat Admin</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial;
+}
+
+body{
+
+background:
+linear-gradient(
+135deg,
+#020617,
+#03122f,
+#071b45
+);
+
+padding:30px;
+
+color:white;
+
+}
+
+.box{
+
+width:1300px;
+
+margin:auto;
+
+padding:25px;
+
+border-radius:25px;
+
+background:
+rgba(
+27,
+41,
+66,
+.92
+);
+
+backdrop-filter:blur(15px);
+
+box-shadow:
+0 0 30px rgba(
+0,0,0,.5
+);
+
+}
+
+h1{
+
+font-size:42px;
+
+margin-bottom:20px;
+
+}
+
+.top{
+
+display:flex;
+
+gap:10px;
+
+flex-wrap:wrap;
+
+margin-bottom:20px;
+
+}
+
+input,
+select{
+
+padding:12px;
+
+border:none;
+
+border-radius:10px;
+
+background:#0f172a;
+
+color:white;
+
+}
+
+button{
+
+padding:12px 18px;
+
+border:none;
+
+border-radius:10px;
+
+cursor:pointer;
+
+font-weight:bold;
+
+color:white;
+
+}
+
+.create{
+background:#2563eb;
+}
+
+.copy{
+background:#16a34a;
+}
+
+.print{
+background:#ea580c;
+}
+
+.csv{
+background:#0891b2;
+}
+
+.txt{
+background:#7c3aed;
+}
+
+.refresh{
+background:#0ea5e9;
+}
+
+.delete{
+background:#ef4444;
+}
+
+table{
+
+width:100%;
+
+border-collapse:collapse;
+
+}
+
+th{
+
+background:#0f172a;
+
+padding:14px;
+
+}
+
+td{
+
+padding:14px;
+
+text-align:center;
+
+border-bottom:
+1px solid #334155;
+
+}
+
+.used{
+color:#22c55e;
+font-weight:bold;
+}
+
+.unused{
+color:#ef4444;
+font-weight:bold;
+}
+
+.badge{
+
+padding:5px 12px;
+
+border-radius:20px;
+
+background:#1e293b;
+
+}
+
+
+#toast{
+position:fixed;
+top:20px;
+right:20px;
+background:#16a34a;
+color:white;
+padding:15px 25px;
+border-radius:12px;
+font-weight:bold;
+display:none;
+z-index:9999;
+box-shadow:0 0 20px rgba(0,0,0,.4);
+}
+
+</style>
+
+</head>
+
+<body>
+<div id="toast"></div>
+
+<div class="box">
+
+<h1>
+
+WiFi Hat Voucher Panel
+
+</h1>
+
+<div id="stats" style="
+display:flex;
+gap:15px;
+margin-bottom:20px;
+flex-wrap:wrap;
+">
+
+<div class="badge">
+📊 Total:
+<span id="total">0</span>
+</div>
+
+<div class="badge">
+🟢 Used:
+<span id="used">0</span>
+</div>
+
+<div class="badge">
+🔴 Unused:
+<span id="unused">0</span>
+</div>
+
+<div class="badge">
+🌐 Online:
+<span id="online">0</span>
+</div>
+
+</div>
+
+<div class="top">
+
+<select id="profile">
+
+<option>
+
+Loading...
+
+</option>
+
+</select>
+
+<input
+id="count"
+value="1"
+type="number"
+min="1"
+>
+
+<button class="create"
+onclick="makeVoucher()">
+
+Create
+
+</button>
+
+<button class="copy"
+onclick="copyVoucher()">
+
+Copy
+
+</button>
+
+<button class="print"
+onclick="window.open('/print/v1')">
+
+Print V1
+
+</button>
+
+<button class="print"
+onclick="window.open('/print/v2')">
+
+Print V2
+
+</button>
+
+<button class="csv"
+onclick="window.open('/export/csv')">
+
+CSV
+
+</button>
+
+<button class="txt"
+onclick="window.open('/export/txt')">
+
+TXT
+
+</button>
+
+<button class="refresh"
+onclick="
+load();
+loadStats();
+alert('Refreshed');
+">
+Refresh
+</button>
+
+<input
+id="search"
+placeholder="Search"
+onkeyup="filterVoucher()"
+>
+
+</div>
+
+<table id="tbl">
+
+<tr>
+
+<th>Voucher</th>
+
+<th>Profile</th>
+
+<th>Status</th>
+
+<th>MAC</th>
+
+<th>Remaining</th>
+
+<th>Expire</th>
+
+<th>Action</th>
+
+</tr>
+
+</table>
+
+</div>
+
+<script>
+
+function toast(msg,color="#16a34a"){
+
+let t=
+document.getElementById(
+"toast"
+)
+
+t.innerText=msg
+
+t.style.background=color
+
+t.style.display="block"
+
+setTimeout(()=>{
+
+t.style.display="none"
+
+},3000)
+
+}
+
+loadProfiles()
+load()
+loadStats()
+
+async function loadProfiles(){
+
+let r=
+await fetch(
+"/profiles"
+)
+
+let d=
+await r.json()
+
+let p=
+document.getElementById(
+"profile"
+)
+
+p.innerHTML=""
+
+d.forEach(x=>{
+
+p.innerHTML+=`
+
+<option value="${x}">
+
+${x}
+
+</option>
+
+`
+
+})
+
+}
+
+async function load(){
+
+let r=
+await fetch(
+"/status"
+)
+
+let d=
+await r.json()
+
+let t=
+document.getElementById(
+"tbl"
+)
+
+t.innerHTML=`
+
+<tr>
+
+<th>Voucher</th>
+<th>Profile</th>
+<th>Status</th>
+<th>MAC</th>
+<th>Remaining</th>
+<th>Expire</th>
+<th>Action</th>
+
+</tr>
+
+`
+
+d.forEach(v=>{
+
+let c=
+
+v.status=="Used"
+
+?
+
+"used"
+
+:
+
+"unused"
+
+t.innerHTML+=`
+
+<tr>
+
+<td>
+
+${v.voucher}
+
+</td>
+
+<td>
+
+<span class="badge">
+
+${v.profile}
+
+</span>
+
+</td>
+
+<td class="${c}">
+
+${v.status}
+
+</td>
+
+<td>
+
+${v.mac}
+
+</td>
+
+<td>
+
+${v.remain}
+
+</td>
+
+<td>
+
+${v.expire}
+
+</td>
+
+<td>
+
+<button
+class="delete"
+onclick="
+delVoucher(
+'${v.voucher}'
+)
+">
+
+Delete
+
+</button>
+
+</td>
+
+</tr>
+
+`
+
+})
+
+}
+
+async function makeVoucher(){
+
+let profile=
+document
+.getElementById(
+"profile"
+)
+.value
+
+let count=
+parseInt(
+document
+.getElementById(
+"count"
+)
+.value
+)
+
+for(
+let i=0;
+i<count;
+i++
+){
+
+await fetch(
+
+"/voucher",
+
+{
+
+method:"POST",
+
+headers:{
+"Content-Type":
+"application/json"
+},
+
+body:
+JSON.stringify({
+
+profile:
+profile
+
+})
+
+}
+
+)
+
+}
+
+toast(
+count + " Voucher Created Successfully"
+)
+
+load()
+loadStats()
+
+}
+async function delVoucher(v){
+
+if(
+!confirm(
+"Delete voucher: " + v + " ?"
+)
+){
+return
+}
+
+let r=
+await fetch(
+"/delete/"+v,
+{
+method:"DELETE"
+}
+)
+
+let d=
+await r.json()
+
+if(
+d.ok
+){
+
+toast(
+"Voucher Deleted Successfully"
+)
+
+load()
+loadStats()
+
+}
+else{
+
+toast(
+"Delete Failed : " +
+d.msg
+)
+
+}
+
+}
+function copyVoucher(){
+
+navigator.clipboard.writeText(
+document.body.innerText
+)
+
+}
+
+async function loadStats(){
+
+let r=
+await fetch(
+"/stats"
+)
+
+let d=
+await r.json()
+
+document.getElementById(
+"total"
+).innerText=d.total
+
+document.getElementById(
+"used"
+).innerText=d.used
+
+document.getElementById(
+"unused"
+).innerText=d.unused
+
+document.getElementById(
+"online"
+).innerText=d.online
+
+}
+
+function filterVoucher(){
+
+let s=
+
+document
+.getElementById(
+"search"
+)
+
+.value
+
+.toLowerCase()
+
+document
+
+.querySelectorAll(
+"#tbl tr"
+)
+
+.forEach(x=>{
+
+if(
+x.innerText
+.toLowerCase()
+.includes(s)
+)
+
+x.style.display=""
+
+else
+
+x.style.display="none"
+
+})
+
+}
+
+</script>
+
+</body>
+
+</html>
