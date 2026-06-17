@@ -325,8 +325,8 @@ def create_payment():
         "email": "user@wifihat.net",
         "amount": amount,
         "return_type": "GET",
-        "redirect_url": "https://fired-rescue-exchange-promotion.trycloudflare.com/payment-success",
-        "cancel_url": "https://fired-rescue-exchange-promotion.trycloudflare.com/payment-cancel",
+        "redirect_url": "https://web-production-51370.up.railway.app/payment-success",
+        "cancel_url": "https://web-production-51370.up.railway.app/payment-cancel",
         "metadata": {
             "profile": profile,
             "mac": mac,
